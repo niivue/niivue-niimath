@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NiiVue with NiiMath</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>NiiVue with NiiMath</h1>
+    </div>
+    <canvas id="gl" height=480 width=640 ></canvas>
+    <div class="command-line">
+      <input id="command" value="-dehaze 5 -dog 2 3.2"/>
+      <button id="process-image-button" disabled></button>
+    </div>
+    <div class="niimath-instructions">
+      NiiMath provides the same commands as <a href="https://mandymejia.com/fsl-maths-commands/">fslmaths</a>, so you can use it just as you would fslmaths. <br>NiiMath has a few features not provided by fslmaths: <br><br> - bandpass &lt;hp&gt; &lt;lp&gt; &lt;tr&gt; : Butterworth filter, highpass and lowpass in Hz,TR in seconds (zero-phase 2*2nd order filtfilt)<br> - bptfm &lt;hp&gt; &lt;lp&gt;         : Same as bptf but does not remove mean (emulates fslmaths &lt; 5.0.7)<br> - bwlabel &lt;conn&gt;          : Connected component labelling for non-zero voxels (conn sets neighbors: 6, 18, 26) <br> - c2h                     : reverse h2c transform<br> - ceil                    : round voxels upwards to the nearest integer<br> - crop &lt;tmin&gt; &lt;tsize&gt;     : remove volumes, starts with 0 not 1! Inputting -1 for a size will set it to the full range<br> - dehaze &lt;mode&gt;           : set dark voxels to zero (mode 1..5; higher yields more surviving voxels)<br> - detrend                 : remove linear trend (and mean) from input<br> - demean                  : remove average signal across volumes (requires 4D input)<br> - edt                     : estimate Euler Distance Transform (distance field). Assumes isotropic input<br> - floor                   : round voxels downwards to the nearest integer<br> - mod                     : modulus fractional remainder - same as '-rem' but includes fractions<br> - otsu &lt;mode&gt;             : binarize image using Otsu''s method (mode 1..5; higher yields more bright voxels))<br> - power &lt;exponent&gt;        : raise the current image by following exponent<br> - h2c                     : convert CT scans from 'Hounsfield' to 'Cormack' units to emphasize soft tissue contrast<br> - resize &lt;X&gt; &lt;Y&gt; &lt;Z&gt; &lt;m&gt;  : grow (&gt;1) or shrink (&lt;1) image. Method &lt;m&gt; (0=nearest,1=linear,2=spline,3=Lanczos,4=Mitchell)\n");  <br> - round                   : round voxels to the nearest integer<br> - sobel                   : fast edge detection<br> - `sobel_binary`          : sobel creating binary edge<br> - `tensor_2lower`         : convert FSL style upper triangle image to NIfTI standard lower triangle order<br> - `tensor_2upper`         : convert NIfTI standard lower triangle image to FSL style upper triangle order<br> - `tensor_decomp_lower`   : as tensor_decomp except input stores lower diagonal (AFNI, ANTS, Camino convention)<br> - trunc                   : truncates the decimal value from floating point value and returns integer value<br> - unsharp  &lt;sigma&gt; &lt;scl&gt;  : edge enhancing unsharp mask (sigma in mm, not voxels; 1.0 is typical for amount (scl))<br> - dog &lt;sPos&gt; &lt;sNeg&gt;       : difference of gaussian with zero-crossing edges (positive and negative sigma mm)<br> - dogr &lt;sPos&gt; &lt;sNeg&gt;      : as dog, without zero-crossing (raw rather than binarized data)<br> - dogx &lt;sPos&gt; &lt;sNeg&gt;      : as dog, zero-crossing for 2D sagittal slices<br> - dogy &lt;sPos&gt; &lt;sNeg&gt;      : as dog, zero-crossing for 2D coronal slices<br> - dogz &lt;sPos&gt; &lt;sNeg&gt;      : as dog, zero-crossing for 2D axial slices<br> - `--compare` &lt;ref&gt;       : report if images are identical, terminates without saving new image\n");<br> - filename.nii            : mimic fslhd (can also export to a txt file: 'niimath T1.nii 2&gt; T1.txt') report header and terminate without saving new image
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
