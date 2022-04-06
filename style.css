@@ -10,6 +10,7 @@
 .command-line {
   text-align: center;
   margin: auto;
+  margin-top: 10px;
 }
 
 .command-line input {
