@@ -1,4 +1,4 @@
-import init from "@niivue/niimath-js/src/process-image.wasm"
+import init from "./node_modules/@niivue/niimath-js/src/process-image.wasm"
 import { LinearMemory } from "@niivue/niimath-js/src/linear-memory.js";
 
 let linearMemory = new LinearMemory({ initial: 256, maximum: 2048 });
