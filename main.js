@@ -37,7 +37,7 @@ async function initWasm() {
         processedImage.img = new Uint8Array(imageBytes);
         break;
       case processedImage.DT_SIGNED_SHORT:
-        processedImage.img = new Int16Array(imageBytes);
+        processedImage.img = new Int16Array(imageBytes.buffer);
         break;
       case processedImage.DT_FLOAT:
         processedImage.img = new Float32Array(imageBytes);
