@@ -55,7 +55,13 @@ async function initWasm() {
 
     let imageIndex = nv.volumes.length;
     if (isNewLayer) {
-      nv.setVolume(processedImage, nv.volumes.length);
+      if (imageIndex > 1)
+        nv.removeVolume(nv.volumes[1].id);
+      if (overlayCheck.checked) {
+        nv.addVolume(processedImage);
+        nv.setColormap(nv.volumes[1].id, 'red');
+      } else
+        nv.setVolume(processedImage, nv.volumes.length);
     } else {
       imageIndex = nv.volumes.indexOf(processedImage);
     }
@@ -71,8 +77,7 @@ function buttonProcessImage() {
 // enable our button after our WASM has been initialize
 async function initializeImageProcessing() {
   await initWasm();
-  let button = document.getElementById('process-image-button');
-  button.innerText = "process";
+  let button = document.getElementById('processButton');
   button.disabled = false;
   button.onclick = buttonProcessImage;
 }
@@ -118,10 +123,14 @@ saveButton.onclick = function () {
 aboutButton.onclick = function () {
     window.alert("The Difference of Gaussian (dog) allows you to specify the width (in millimeters) for two Gaussian Blurs to find edges. The buttons at the bottom let you load different modalities. Drag and drop your own images to explore other datasets.");
 }
+moreButton.onclick = function () {
+    window.open('https://github.com/niivue/niivue-niimath');
+}
 let worker = new MyWorker();
 initializeImageProcessing();
 let canvas = document.getElementById('gl');
 const nv = new Niivue();
+nv.setInterpolation(true);
 nv.attachToCanvas(canvas);
 var volumeList = [{ url: "./fa8.nii.gz"},];
 await nv.loadVolumes(volumeList);
