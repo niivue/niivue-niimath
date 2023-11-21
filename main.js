@@ -40,18 +40,10 @@ async function initWasm() {
         processedImage.img = new Int16Array(imageBytes.buffer);
         break;
       case processedImage.DT_FLOAT:
-        processedImage.img = new Float32Array(imageBytes);
-        break;
-      case processedImage.DT_DOUBLE:
-        throw "datatype " + processedImage.hdr.datatypeCode + " not supported";
-      case processedImage.DT_RGB:
-        processedImage.img = new Uint8Array(imageBytes);
+        processedImage.img = new Float32Array(imageBytes.buffer);
         break;
       case processedImage.DT_UINT16:
-        processedImage.img = new Uint16Array(imageBytes);
-        break;
-      case processedImage.DT_RGBA32:
-        processedImage.img = new Uint8Array(imageBytes);
+        processedImage.img = new Uint16Array(imageBytes.buffer);
         break;
       default:
         throw "datatype " + processedImage.hdr.datatypeCode + " not supported";
@@ -84,27 +76,52 @@ async function initializeImageProcessing() {
   button.disabled = false;
   button.onclick = buttonProcessImage;
 }
-
-
-let volumeList = [
-  // first object in array is background image
-    {
-      url: "./mni152.nii.gz",
-      volume: {hdr: null, img: null},
-      name: "some_image",
-      colorMap: "gray",
-      opacity: 1,
-      visible: true,
-    }
- ];
-
+const imgs = [
+    "fa8",
+    "dwi16",
+    "fmri32",
+    "chris_PD",
+    "chris_t1",
+    "chris_t2",
+    "CT_Abdo",
+    "CT_Electrodes",
+    "CT_Philips",
+    "CT_pitch",
+    "fmri_pitch",
+    "mni152",
+    "MR_Gd",
+    "spm152",
+    "spmMotor",
+];
+const imgEl = document.getElementById("images");
+for (let i = 0; i < imgs.length; i++) {
+    let btn = document.createElement("button");
+    btn.innerHTML = imgs[i];
+    btn.onclick = function () {
+      let root = "https://niivue.github.io/niivue-demo-images/";
+      if (i < 3)
+        root = "./";
+      let img = root + imgs[i] + ".nii.gz";
+      console.log("Loading: " + img);
+      volumeList[0].url = img;
+      nv.loadVolumes(volumeList);
+      nv.updateGLVolume();
+    };
+    imgEl.appendChild(btn);
+}
+saveButton.onclick = function () {
+    if (nv.volumes.length < 2)
+        nv.saveImage("niimath.nii.gz", false, 0);
+    else
+        nv.saveImage("niimath.nii.gz", false, 1);
+}
+aboutButton.onclick = function () {
+    window.alert("The Difference of Gaussian (dog) allows you to specify the width (in millimeters) for two Gaussian Blurs to find edges. The buttons at the bottom let you load different modalities. Drag and drop your own images to explore other datasets.");
+}
 let worker = new MyWorker();
 initializeImageProcessing();
 let canvas = document.getElementById('gl');
 const nv = new Niivue();
 nv.attachToCanvas(canvas);
-nv.loadVolumes(volumeList);
-
-
-
-
+var volumeList = [{ url: "./fa8.nii.gz"},];
+await nv.loadVolumes(volumeList);
