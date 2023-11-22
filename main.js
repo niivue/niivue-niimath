@@ -85,6 +85,9 @@ const imgs = [
     "fa8",
     "dwi16",
     "fmri32",
+    "T1w7T",
+    "T2w7T",
+    "bold7T",
     "chris_PD",
     "chris_t1",
     "chris_t2",
@@ -93,6 +96,7 @@ const imgs = [
     "CT_Philips",
     "CT_pitch",
     "fmri_pitch",
+    "Iguana",
     "mni152",
     "MR_Gd",
     "spm152",
@@ -104,7 +108,7 @@ for (let i = 0; i < imgs.length; i++) {
     btn.innerHTML = imgs[i];
     btn.onclick = function () {
       let root = "https://niivue.github.io/niivue-demo-images/";
-      if (i < 3)
+      if (i < 6)
         root = "./";
       let img = root + imgs[i] + ".nii.gz";
       console.log("Loading: " + img);
@@ -124,7 +128,7 @@ aboutButton.onclick = function () {
     window.alert("The Difference of Gaussian (dog) allows you to specify the width (in millimeters) for two Gaussian Blurs to find edges. The buttons at the bottom let you load different modalities. Drag and drop your own images to explore other datasets.");
 }
 moreButton.onclick = function () {
-    window.open('https://github.com/niivue/niivue-niimath');
+    window.open('https://github.com/niivue/niivue-niimath#commands');
 }
 let worker = new MyWorker();
 initializeImageProcessing();
