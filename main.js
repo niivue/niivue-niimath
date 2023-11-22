@@ -133,4 +133,4 @@ const nv = new Niivue();
 nv.setInterpolation(true);
 nv.attachToCanvas(canvas);
 var volumeList = [{ url: "./fa8.nii.gz"},];
-await nv.loadVolumes(volumeList);
+nv.loadVolumes(volumeList);
