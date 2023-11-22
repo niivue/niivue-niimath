@@ -3,27 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/zc3N/8SEhL/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/x8fH/9+fn7/VlZW/1VVVf8oKCj/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/BQUF/yEhIf85OTn/GRkZ/wsLC/9kZGT/XFxc/2dnZ/9ra2v/dHR0/zg4OP8AAAD/AAAA/wAAAP8AAAD/AgIC/0RERP9eXl7/XFxc/1dXV/9xcXH/fn5+/1ZWVv9eXl7/Z2dn/2pqav9sbGz/AAAA/wgICP8cHBz/JiYm/x8fH/9TU1P/VFRU/2ZmZv9iYmL/ZGRk/15eXv9PT0//TU1N/1VVVf9gYGD/YmJi/wgICP9RUVH/XFxc/1xcXP9PT0//Tk5O/19fX/9ZWVn/a2tr/3Nzc/9eXl7/Y2Nj/1xcXP9VVVX/TU1N/09PT/8vLy//Y2Nj/19fX/9jY2P/X19f/0pKSv9YWFj/ZmZm/2FhYf9YWFj/a2tr/29vb/9gYGD/X19f/15eXv9sbGz/SEhI/2VlZf9lZWX/ZmZm/2lpaf9WVlb/X19f/11dXf9iYmL/dnZ2/29vb/9gYGD/ZmZm/2NjY/9dXV3/b29v/0RERP9paWn/b29v/2FhYf9sbGz/ZmZm/2dnZ/9zc3P/enp6/1RUVP9cXFz/d3d3/2dnZ/9gYGD/ZGRk/2ZmZv8lJSX/Z2dn/2ZmZv9ra2v/Y2Nj/2RkZP9tbW3/dXV1/4ODg/9kZGT/c3Nz/11dXf9xcXH/YGBg/2tra/9jY2P/CAgI/1tbW/9ubm7/ZWVl/2dnZ/9dXV3/bW1t/3t7e/96enr/ZmZm/2tra/93d3f/cHBw/3BwcP9mZmb/aGho/wAAAP8oKCj/ZGRk/2VlZf9kZGT/bGxs/2JiYv94eHj/dHR0/4CAgP9wcHD/bGxs/25ubv9zc3P/aWlp/2BgYP8AAAD/AAAA/y0tLf9hYWH/Z2dn/2pqav9ubm7/aWlp/3d3d/+Ghob/fX19/2tra/9hYWH/Z2dn/19fX/8yMjL/AAAA/wAAAP8AAAD/FxcX/0dHR/9mZmb/bGxs/2xsbP9+fn7/hISE/35+fv9kZGT/bGxs/2ZmZv9DQ0P/AgIC/wAAAP8AAAD/AAAA/wAAAP8DAwP/Ghoa/0lJSf9cXFz/X19f/3Fxcf9sbGz/c3Nz/2RkZP86Ojr/BwcH/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/DQ0N/xISEv8yMjL/Q0ND/zw8PP8XFxf/AAAA/wAAAP8AAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NiiVue with NiiMath</title>
-    <script type="module" crossorigin src="/niivue-niimath/assets/index.ee0045f0.js"></script>
-    <link rel="stylesheet" href="/niivue-niimath/assets/index.3ae85638.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>NiiVue</title>
+    
+    <script type="module" crossorigin src="/niivue-niimath/assets/index.dc9d88b3.js"></script>
+    <link rel="stylesheet" href="/niivue-niimath/assets/index.cc986a69.css">
   </head>
   <body>
-    <span id="forkongithub"><a href="https://github.com/niivue/niivue-niimath">Fork me on GitHub</a></span>
-    <div id="app">
-      <h1>NiiVue with NiiMath</h1>
-    </div>
-    <canvas id="gl" height=480 width=640 ></canvas>
-    <div class="command-line">
+
+    <header>
+      <label for="command">Command</label>
       <input id="command" value="-dehaze 5 -dog 2 3.2"/>
-      <button id="process-image-button" disabled></button>
-    </div>
-    <div class="niimath-instructions">
-      <p>This example <a href="https://vitejs.dev/">Vite</a> application uses <a href="https://github.com/niivue">Niivue</a> and <a href="https://github.com/rordenlab/niimath">NiiMath</a> via a Web Worker to provide asynchronous image processing for Nifti images.</p><br>  NiiMath provides the same commands as <a href="https://mandymejia.com/fsl-maths-commands/">fslmaths</a>, so you can use it just as you would fslmaths. NiiMath has a few features not provided by fslmaths: <br><br> - bandpass &lt;hp&gt; &lt;lp&gt; &lt;tr&gt; : Butterworth filter, highpass and lowpass in Hz,TR in seconds (zero-phase 2*2nd order filtfilt)<br> - bptfm &lt;hp&gt; &lt;lp&gt;         : Same as bptf but does not remove mean (emulates fslmaths &lt; 5.0.7)<br> - bwlabel &lt;conn&gt;          : Connected component labelling for non-zero voxels (conn sets neighbors: 6, 18, 26) <br> - c2h                     : reverse h2c transform<br> - ceil                    : round voxels upwards to the nearest integer<br> - crop &lt;tmin&gt; &lt;tsize&gt;     : remove volumes, starts with 0 not 1! Inputting -1 for a size will set it to the full range<br> - dehaze &lt;mode&gt;           : set dark voxels to zero (mode 1..5; higher yields more surviving voxels)<br> - detrend                 : remove linear trend (and mean) from input<br> - demean                  : remove average signal across volumes (requires 4D input)<br> - edt                     : estimate Euler Distance Transform (distance field). Assumes isotropic input<br> - floor                   : round voxels downwards to the nearest integer<br> - mod                     : modulus fractional remainder - same as '-rem' but includes fractions<br> - otsu &lt;mode&gt;             : binarize image using Otsu''s method (mode 1..5; higher yields more bright voxels))<br> - power &lt;exponent&gt;        : raise the current image by following exponent<br> - h2c                     : convert CT scans from 'Hounsfield' to 'Cormack' units to emphasize soft tissue contrast<br> - resize &lt;X&gt; &lt;Y&gt; &lt;Z&gt; &lt;m&gt;  : grow (&gt;1) or shrink (&lt;1) image. Method &lt;m&gt; (0=nearest,1=linear,2=spline,3=Lanczos,4=Mitchell)\n");  <br> - round                   : round voxels to the nearest integer<br> - sobel                   : fast edge detection<br> - `sobel_binary`          : sobel creating binary edge<br> - `tensor_2lower`         : convert FSL style upper triangle image to NIfTI standard lower triangle order<br> - `tensor_2upper`         : convert NIfTI standard lower triangle image to FSL style upper triangle order<br> - `tensor_decomp_lower`   : as tensor_decomp except input stores lower diagonal (AFNI, ANTS, Camino convention)<br> - trunc                   : truncates the decimal value from floating point value and returns integer value<br> - unsharp  &lt;sigma&gt; &lt;scl&gt;  : edge enhancing unsharp mask (sigma in mm, not voxels; 1.0 is typical for amount (scl))<br> - dog &lt;sPos&gt; &lt;sNeg&gt;       : difference of gaussian with zero-crossing edges (positive and negative sigma mm)<br> - dogr &lt;sPos&gt; &lt;sNeg&gt;      : as dog, without zero-crossing (raw rather than binarized data)<br> - dogx &lt;sPos&gt; &lt;sNeg&gt;      : as dog, zero-crossing for 2D sagittal slices<br> - dogy &lt;sPos&gt; &lt;sNeg&gt;      : as dog, zero-crossing for 2D coronal slices<br> - dogz &lt;sPos&gt; &lt;sNeg&gt;      : as dog, zero-crossing for 2D axial slices<br> - `--compare` &lt;ref&gt;       : report if images are identical, terminates without saving new image\n");<br> - filename.nii            : mimic fslhd (can also export to a txt file: 'niimath T1.nii 2&gt; T1.txt') report header and terminate without saving new image
-    </div>
+      <button id="processButton" disabled>Process</button>
+      <button id="saveButton">Save</button>
+      <button id="aboutButton">About</button>
+      <button id="moreButton">More commands</button>
+      <label for="overlayCheck" style="color:white">Overlay</label>
+      <input type="checkbox" id="overlayCheck" checked />
+    </header>
+    <main>
+      <canvas id="gl"></canvas>
+    </main>
+    <footer>
+        <label id="images"></label>
+</footer>
     
   </body>
 </html>
