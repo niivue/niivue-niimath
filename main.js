@@ -127,6 +127,9 @@ saveButton.onclick = function () {
 aboutButton.onclick = function () {
     window.alert("The Difference of Gaussian (dog) allows you to specify the width (in millimeters) for two Gaussian Blurs to find edges. The buttons at the bottom let you load different modalities. Drag and drop your own images to explore other datasets.");
 }
+helpButton.onclick = function () {
+    window.alert("The `dehaze -5` removes variations in the air outside the brain. Dehaze requires a number 1..5 higher yields more surviving voxels. The `-dog 2 3.2` computes a difference of Gaussian edge detection method with 2mm and 3.2mm full-width half maximums. This roughly corresponds with the thickness of the human cortex. For smaller features (like the Iguana exmaple) you will want to choose smaller values.");
+}
 moreButton.onclick = function () {
     window.open('https://github.com/niivue/niivue-niimath#commands');
 }
