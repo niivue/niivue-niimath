@@ -1,143 +1,187 @@
-import './style.css'
-import {Niivue} from '@niivue/niivue'
-import MyWorker from "./worker?worker";
-import { v4 as uuidv4 } from "uuid";
+import { Niivue, NVMeshUtilities } from '@niivue/niivue'
 
-function processImage(worker) {
-  const imageIndex = 0;
-  let image = nv.volumes[imageIndex].clone();
-  let metadata = image.getImageMetadata();
-  const isNewLayer = true;
-  const input = document.getElementById('command');
-  const cmd = input.value;
-  worker.postMessage([metadata, image.img.buffer, cmd, isNewLayer]);
-}
-
-// initialize our WASM
-async function initWasm() {
-  worker.onmessage = (e) => {
-    // find our processed image
-    const id = e.data.id;
-    let processedImage = nv.volumes.find((image) => image.id == id);
-    if (!processedImage) {
-      console.log("image not found");
-      return;
+async function main() {
+  const NiimathWorker = await new Worker('./niimathWorker.js') //createNiimathWorker()
+  const loadingCircle = document.getElementById('loadingCircle')
+  let startTime = Date.now()
+  function removeExtension(filename) {
+    if (filename.endsWith('.gz')) {
+      filename = filename.slice(0, -3)
     }
-
-    const isNewLayer = e.data.isNewLayer;
-    if (isNewLayer) {
-      processedImage = processedImage.clone();
-      processedImage.id = uuidv4();
+    let lastDotIndex = filename.lastIndexOf('.')
+    if (lastDotIndex !== -1) {
+      filename = filename.slice(0, lastDotIndex)
     }
-
-    let imageBytes = e.data.imageBytes;
-
-    switch (processedImage.hdr.datatypeCode) {
-      case processedImage.DT_UNSIGNED_CHAR:
-        processedImage.img = new Uint8Array(imageBytes);
-        break;
-      case processedImage.DT_SIGNED_SHORT:
-        processedImage.img = new Int16Array(imageBytes.buffer);
-        break;
-      case processedImage.DT_FLOAT:
-        processedImage.img = new Float32Array(imageBytes.buffer);
-        break;
-      case processedImage.DT_UINT16:
-        processedImage.img = new Uint16Array(imageBytes.buffer);
-        break;
-      default:
-        throw "datatype " + processedImage.hdr.datatypeCode + " not supported";
-    }
-
-    // recalculate
-    processedImage.trustCalMinMax = false;
-    processedImage.calMinMax();
-
-    let imageIndex = nv.volumes.length;
-    if (isNewLayer) {
-      if (imageIndex > 1)
-        nv.removeVolume(nv.volumes[1].id);
-      if (overlayCheck.checked) {
-        nv.addVolume(processedImage);
-        nv.setColormap(nv.volumes[1].id, 'red');
-      } else
-        nv.setVolume(processedImage, nv.volumes.length);
-    } else {
-      imageIndex = nv.volumes.indexOf(processedImage);
-    }
-    console.log('image processed');
+    return filename
   }
-}
+  
+  saveImageBtn.onclick = function () {
+    if ((nv1.volumes.length < 1) && (nv1.meshes.length < 1)) {
+      window.alert('No volume open: you can open one using the "Volume" menu. Alternatively, drag and drop a image file.')
+    }
+    nv1.volumes[0].saveToDisk('niimath.nii')
+    if (nv1.volumes.length > 1)  {
+      nv1.volumes[1].saveToDisk('overlay.nii')
+    }
+  }
+  saveMeshBtn.onclick = function () {
+    if (nv1.meshes.length < 1) {
+      window.alert('No mesh open: you can create one with a "mesh" operation. Alternatively, drag and drop a mesh file.')
+    } else {
+      saveDialog.show()
+    }
+  }
+  applySaveBtn.onclick = function () {
+    if (nv1.meshes.length < 1) {
+      return
+    }
+    let format = 'obj'
+    if (formatSelect.selectedIndex === 0) {
+      format = 'mz3'
+    }
+    if (formatSelect.selectedIndex === 2) {
+      format = 'stl'
+    }
+    NVMeshUtilities.saveMesh(nv1.meshes[0].pts, nv1.meshes[0].tris, `mesh.${format}`, true)
+  }
+  NiimathWorker.onmessage = async function (e) {
+    if (e.data.blob instanceof Blob) {
+const reader = new FileReader();
 
-// respond to our button press
-function buttonProcessImage() {
-  processImage(worker);
-}
-
-// enable our button after our WASM has been initialize
-async function initializeImageProcessing() {
-  await initWasm();
-  let button = document.getElementById('processButton');
-  button.disabled = false;
-  button.onclick = buttonProcessImage;
-}
-const imgs = [
-    "fa8",
-    "dwi16",
-    "fmri32",
-    "T1w7T",
-    "T2w7T",
-    "bold7T",
-    "chris_PD",
-    "chris_t1",
-    "chris_t2",
-    "CT_Abdo",
-    "CT_Electrodes",
-    "CT_Philips",
-    "CT_pitch",
-    "fmri_pitch",
-    "Iguana",
-    "mni152",
-    "MR_Gd",
-    "spm152",
-    "spmMotor",
-];
-const imgEl = document.getElementById("images");
-for (let i = 0; i < imgs.length; i++) {
-    let btn = document.createElement("button");
-    btn.innerHTML = imgs[i];
-    btn.onclick = function () {
-      let root = "https://niivue.github.io/niivue-demo-images/";
-      if (i < 6)
-        root = "./";
-      let img = root + imgs[i] + ".nii.gz";
-      console.log("Loading: " + img);
-      volumeList[0].url = img;
-      nv.loadVolumes(volumeList);
-      nv.updateGLVolume();
+    reader.onload = async () => {
+        loadingCircle.classList.add('hidden');
+        const outName = e.data.outName || 'test.nii';
+        
+        if (outName.endsWith('.mz3')) {
+            if (nv1.meshes.length > 0) {
+                nv1.removeMesh(nv1.meshes[0]);
+            }
+            nv1.loadFromArrayBuffer(reader.result, outName);
+        } else {
+            if (nv1.volumes.length > 1) {
+                nv1.removeVolume(nv1.volumes[1]);
+            }
+            if (overlayCheck.checked) {
+                await nv1.loadFromArrayBuffer(reader.result, outName);
+                nv1.volumes[1].opacity = 0.5
+                nv1.setColormap(nv1.volumes[1].id, 'red');
+            } else {
+                if (nv1.volumes.length > 0) {
+                    nv1.removeVolume(nv1.volumes[0]);
+                }
+                nv1.loadFromArrayBuffer(reader.result, outName);
+            }
+            nv1.setSliceType(nv1.sliceTypeMultiplanar);
+        }
+        let str = ` ${Date.now() - startTime}ms`;
+        document.getElementById('location').innerHTML = str;
     };
-    imgEl.appendChild(btn);
-}
-saveButton.onclick = function () {
-    if (nv.volumes.length < 2)
-        nv.saveImage("niimath.nii.gz", false, 0);
-    else
-        nv.saveImage("niimath.nii.gz", false, 1);
-}
-aboutButton.onclick = function () {
-    window.alert("The Difference of Gaussian (dog) allows you to specify the width (in millimeters) for two Gaussian Blurs to find edges. The buttons at the bottom let you load different modalities. Drag and drop your own images to explore other datasets.");
-}
-helpButton.onclick = function () {
-    window.alert("The `dehaze -5` removes variations in the air outside the brain. Dehaze requires a number 1..5 higher yields more surviving voxels. The `-dog 2 3.2` computes a difference of Gaussian edge detection method with 2mm and 3.2mm full-width half maximums. This roughly corresponds with the thickness of the human cortex. For smaller features (like the Iguana exmaple) you will want to choose smaller values.");
-}
-moreButton.onclick = function () {
+    reader.readAsArrayBuffer(e.data.blob);
+    }
+  }
+  processBtn.onclick = async function () {
+      if (nv1.meshes.volumes < 1) {
+        window.alert("No volume open for saving.")
+        return
+      }
+      startTime = Date.now()
+      const niiBuffer = await nv1.saveImage().buffer
+      loadingCircle.classList.remove('hidden')
+      let nii = await new Blob([niiBuffer], {
+        type: 'application/octet-stream'
+      })
+      let inName = removeExtension(nv1.volumes[0].name) + '.nii'
+      let fileNii = await new File([nii], inName)
+      let ops = operationsText.value
+      ops = ops.trim()
+      ops = ops.replace(/\s\s+/g, ' ')
+      let outName = inName
+      if (ops.includes("-mesh"))
+        outName = removeExtension(nv1.volumes[0].name) + '.mz3'
+      ops = 'niimath '+inName+' '+ops+' '+outName
+      NiimathWorker.postMessage({
+          blob: fileNii,
+          outName: outName,
+          cmd: ops,
+      })
+  }
+  operationSelect.onchange = function () {
+    operationsText.value = operationSelect.value
+  }
+  volumeSelect.onchange = async function () {
+    const selectedOption = volumeSelect.options[volumeSelect.selectedIndex]
+    const txt = selectedOption.text
+    if (volumeSelect.selectedIndex > 15) {
+      nv1.volumes = []
+      let fnm = 'https://niivue.github.io/niivue/images/' + txt
+      nv1.loadMeshes([{ url: fnm }])
+      return
+    }
+    let fnm = './' + txt
+    if (volumeSelect.selectedIndex > 7) {
+      fnm = 'https://niivue.github.io/niivue-demo-images/' + txt
+    }
+    if (nv1.meshes.length > 0) {
+      nv1.removeMesh(nv1.meshes[0])
+    }
+    nv1.volumes = []
+    fnm += '.nii.gz'
+    nv1.loadVolumes([{ url: fnm }])
+  }
+  simplifyBtn.onclick = function () {
+    if (nv1.meshes.length < 1) {
+      window.alert('No mesh open to simplify. Drag and drop a mesh or create a mesh from a voxel based image using a mesh operation.')
+    } else {
+      simplifyDialog.show()
+    }
+  }
+  applySimpleBtn.onclick = function () {
+      startTime = Date.now()
+      loadingCircle.classList.remove('hidden')
+      const shrinkValue = Math.min(Math.max(Number(shrinkSimplePct.value) / 100, 0.01), 1)
+      if (shrinkValue >= 1)
+        return
+      const verts = nv1.meshes[0].pts.slice()
+      const tris = nv1.meshes[0].tris.slice()
+      const meshBuffer = NVMeshUtilities.createMZ3(verts, tris, false)
+      let mz3 = new Blob([meshBuffer], {
+          type: 'application/octet-stream'
+      })
+      let inName = 'mesh.mz3'
+      let fileMz3 = new File([mz3], inName)
+      let outName = 'mesh.mz3'
+      let ops = 'niimath '+inName+' -r 0.1 '+outName
+
+      NiimathWorker.postMessage({
+          blob: fileMz3,
+          outName: outName,
+          cmd: ops,
+      })
+  }
+  moreButton.onclick = function () {
     window.open('https://github.com/niivue/niivue-niimath#commands');
+  }
+  function handleLocationChange(data) {
+    document.getElementById('location').innerHTML = '&nbsp;&nbsp;' + data.string
+  }
+  const defaults = {
+    onLocationChange: handleLocationChange,
+    backColor: [0.2, 0.2, 0.3, 1],
+    show3Dcrosshair: true
+  }
+  const nv1 = new Niivue(defaults)
+  nv1.onImageLoaded = () => {
+    nv1.setSliceType(nv1.sliceTypeMultiplanar)
+  }
+  nv1.attachToCanvas(gl1)
+  nv1.isAlphaClipDark = true
+  nv1.setClipPlane([0.2, 0, 120])
+  nv1.opts.dragMode = nv1.dragModes.pan
+  nv1.setRenderAzimuthElevation(245, 15)
+  nv1.opts.multiplanarForceRender = true
+  nv1.opts.yoke3Dto2DZoom = true
+  nv1.setInterpolation(true)
+  await nv1.loadVolumes([{ url: './mni152.nii.gz' }])
 }
-let worker = new MyWorker();
-initializeImageProcessing();
-let canvas = document.getElementById('gl');
-const nv = new Niivue();
-nv.setInterpolation(true);
-nv.attachToCanvas(canvas);
-var volumeList = [{ url: "./fa8.nii.gz"},];
-nv.loadVolumes(volumeList);
+
+main()
