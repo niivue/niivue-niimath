@@ -10,7 +10,6 @@ self.importScripts("niimath.js?rnd="+Math.random())
 function doWasm(file, args, outName) {
   if ((file === undefined) || (args.length < 1))
     return
-  console.log("Bork\n");
   const argc = args.length + 1
   const argv = ['niimath']
   // Allocate memory and set argument values
