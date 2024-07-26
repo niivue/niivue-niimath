@@ -1,7 +1,7 @@
 import { Niivue, NVMeshUtilities } from '@niivue/niivue'
 
 async function main() {
-  const NiimathWorker = await new Worker('./niimathWorker.js') //createNiimathWorker()
+  const NiimathWorker = await new Worker('./niimathWorker.js')
   const loadingCircle = document.getElementById('loadingCircle')
   let startTime = Date.now()
   function removeExtension(filename) {
@@ -46,64 +46,62 @@ async function main() {
   }
   NiimathWorker.onmessage = async function (e) {
     if (e.data.blob instanceof Blob) {
-const reader = new FileReader();
-
-    reader.onload = async () => {
-        loadingCircle.classList.add('hidden');
-        const outName = e.data.outName || 'test.nii';
-        
+      const reader = new FileReader()
+      reader.onload = async () => {
+        loadingCircle.classList.add('hidden')
+        const outName = e.data.outName || 'test.nii'
         if (outName.endsWith('.mz3')) {
             if (nv1.meshes.length > 0) {
-                nv1.removeMesh(nv1.meshes[0]);
+                nv1.removeMesh(nv1.meshes[0])
             }
-            nv1.loadFromArrayBuffer(reader.result, outName);
+            nv1.loadFromArrayBuffer(reader.result, outName)
         } else {
             if (nv1.volumes.length > 1) {
-                nv1.removeVolume(nv1.volumes[1]);
+                nv1.removeVolume(nv1.volumes[1])
             }
             if (overlayCheck.checked) {
-                await nv1.loadFromArrayBuffer(reader.result, outName);
+                await nv1.loadFromArrayBuffer(reader.result, outName)
                 nv1.volumes[1].opacity = 0.5
-                nv1.setColormap(nv1.volumes[1].id, 'red');
+                nv1.setColormap(nv1.volumes[1].id, 'red')
             } else {
                 if (nv1.volumes.length > 0) {
-                    nv1.removeVolume(nv1.volumes[0]);
+                    nv1.removeVolume(nv1.volumes[0])
                 }
-                nv1.loadFromArrayBuffer(reader.result, outName);
+                nv1.loadFromArrayBuffer(reader.result, outName)
             }
-            nv1.setSliceType(nv1.sliceTypeMultiplanar);
+            nv1.setSliceType(nv1.sliceTypeMultiplanar)
         }
-        let str = ` ${Date.now() - startTime}ms`;
-        document.getElementById('location').innerHTML = str;
-    };
-    reader.readAsArrayBuffer(e.data.blob);
+        let str = ` ${Date.now() - startTime}ms`
+        document.getElementById('location').innerHTML = str
+      }
+      reader.readAsArrayBuffer(e.data.blob)
     }
   }
   processBtn.onclick = async function () {
-      if (nv1.meshes.volumes < 1) {
+    if (nv1.meshes.volumes < 1) {
         window.alert("No volume open for saving.")
         return
-      }
-      startTime = Date.now()
-      const niiBuffer = await nv1.saveImage().buffer
-      loadingCircle.classList.remove('hidden')
-      let nii = await new Blob([niiBuffer], {
-        type: 'application/octet-stream'
-      })
-      let inName = removeExtension(nv1.volumes[0].name) + '.nii'
-      let fileNii = await new File([nii], inName)
-      let ops = operationsText.value
-      ops = ops.trim()
-      ops = ops.replace(/\s\s+/g, ' ')
-      let outName = inName
-      if (ops.includes("-mesh"))
-        outName = removeExtension(nv1.volumes[0].name) + '.mz3'
-      ops = 'niimath '+inName+' '+ops+' '+outName
-      NiimathWorker.postMessage({
-          blob: fileNii,
-          outName: outName,
-          cmd: ops,
-      })
+    }
+    let inName = removeExtension(nv1.volumes[0].name) + '.nii'
+    let outName = inName
+    if (operationsText.value.includes("-mesh")) {
+      outName = removeExtension(nv1.volumes[0].name) + '.mz3'
+    }
+    let args = operationsText.value.trim().split(/\s+/)
+    args.unshift(inName)
+    args.push(outName)
+    startTime = Date.now()
+    const niiBuffer = await nv1.saveImage().buffer
+    loadingCircle.classList.remove('hidden')
+    let nii = await new Blob([niiBuffer], {
+      type: 'application/octet-stream'
+    })
+    let fileNii = await new File([nii], inName)
+    NiimathWorker.postMessage({
+        blob: fileNii,
+        cmd: args,
+        outName: outName
+    })
   }
   operationSelect.onchange = function () {
     operationsText.value = operationSelect.value
@@ -151,7 +149,6 @@ const reader = new FileReader();
       let fileMz3 = new File([mz3], inName)
       let outName = 'mesh.mz3'
       let ops = 'niimath '+inName+' -r 0.1 '+outName
-
       NiimathWorker.postMessage({
           blob: fileMz3,
           outName: outName,
@@ -159,7 +156,7 @@ const reader = new FileReader();
       })
   }
   moreButton.onclick = function () {
-    window.open('https://github.com/niivue/niivue-niimath#commands');
+    window.open('https://github.com/niivue/niivue-niimath#commands')
   }
   function handleLocationChange(data) {
     document.getElementById('location').innerHTML = '&nbsp;&nbsp;' + data.string
