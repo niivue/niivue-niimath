@@ -14,7 +14,6 @@ async function main() {
     }
     return filename
   }
-  
   saveImageBtn.onclick = function () {
     if ((nv1.volumes.length < 1) && (nv1.meshes.length < 1)) {
       window.alert('No volume open: you can open one using the "Volume" menu. Alternatively, drag and drop a image file.')
