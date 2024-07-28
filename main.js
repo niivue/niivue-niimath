@@ -1,6 +1,50 @@
 import { Niivue, NVMeshUtilities } from '@niivue/niivue'
 
+class NiiMathWrapper {
+  constructor(workerScript) {
+    this.worker = new Worker(workerScript)
+  }
+  niimath(niiBuffer, operationsText) {
+    return new Promise((resolve, reject) => {
+      const niiBlob = new Blob([niiBuffer], { type: 'application/octet-stream' })
+      const inName = 'input.nii'; // or derive from context
+      let outName = inName
+      if (operationsText.includes("-mesh")) {
+        outName = 'output.mz3'; // or derive from context
+      }
+      const args = operationsText.trim().split(/\s+/)
+      args.unshift(inName)
+      args.push(outName)
+      const file = new File([niiBlob], inName)
+      this.worker.onmessage = (e) => {
+        if (e.data.blob instanceof Blob) {
+          const reader = new FileReader()
+          reader.onload = () => {
+            //resolve({ arrayBuffer: reader.result, outName: e.data.outName, exitCode: e.data.exitCode })
+            resolve(reader.result)
+          }
+          reader.onerror = () => {
+            reject(new Error('Failed to read the Blob as an ArrayBuffer'))
+          }
+          reader.readAsArrayBuffer(e.data.blob)
+        } else {
+          reject(new Error('Expected Blob from worker'))
+        }
+      }
+      this.worker.onerror = (e) => {
+        reject(new Error(e.message))
+      }
+      this.worker.postMessage({ blob: file, cmd: args, outName: outName })
+    })
+  }
+  terminate() {
+    this.worker.terminate()
+  }
+}
+
+
 async function main() {
+  const wrapper = new NiiMathWrapper('./niimathWorker.js')
   const NiimathWorker = await new Worker('./niimathWorker.js')
   const loadingCircle = document.getElementById('loadingCircle')
   let startTime = Date.now()
@@ -74,6 +118,20 @@ async function main() {
         document.getElementById('location').innerHTML = str
       }
       reader.readAsArrayBuffer(e.data.blob)
+    }
+  }
+  processBtn2.onclick = async function () {
+    const niiBuffer = await nv1.saveImage().buffer
+    loadingCircle.classList.remove('hidden')
+    const arrayBuffer = await wrapper.niimath(niiBuffer, operationsText.value)
+    loadingCircle.classList.add('hidden')
+    const isMz3 = new Uint8Array(arrayBuffer)[0] === 77 && new Uint8Array(arrayBuffer)[1] === 90
+    if (isMz3) {
+      nv1.removeMesh(nv1.meshes[0])
+      await nv1.loadFromArrayBuffer(arrayBuffer, 'test.mz3')
+    } else {
+      nv1.removeVolume(nv1.volumes[0])
+      await nv1.loadFromArrayBuffer(arrayBuffer, 'test.nii')
     }
   }
   processBtn.onclick = async function () {
