@@ -13,6 +13,7 @@
     "vite": "^2.9.0"
   },
   "dependencies": {
-    "@niivue/niivue": "^0.44.2"
+    "@niivue/niimath-js": "^0.0.1643874671203",
+    "@niivue/niivue": "^0.38.1"
   }
 }

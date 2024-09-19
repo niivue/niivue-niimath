@@ -1,99 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="./favicon.ico" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>NiiVue</title>
+    <link rel="stylesheet" href="./niivue.css" />
+  </head>
+  <body>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./niivue.css" />
-  <title>Niivue Mesh</title>
-</head>
-
-<body>
-  <header>
-    <label for="volumeSelect">Volume</label>
-    <select id="volumeSelect">
-      <option selected>mni152</option>
-      <option>bet</option>
-      <option>fa8</option>
-      <option>dwi16</option>
-      <option>fmri32</option>
-      <option>T1w7T</option>
-      <option>T2w7T</option>
-      <option>bold7T</option>
-      <option>Iguana</option>
-      <option>CT_Philips</option>
-      <option>mni152</option>
-      <option>CT_AVM</option>
-      <option>chris_t1</option>
-      <option>chris_t2</option>
-      <option>chris_PD</option>
-      <option>chris_MRA</option>
-      <option>lh.pial</option>
-      <option>fs_LR.32k.L.inflated.surf.gii</option>
-    </select>
-    <label for="operationsText">Operations</label>
-    <select id="operationSelect">
-      <option value="-s 3">blur</option>
-      <option value="-bin">binarize</option>
-      <option value="-dilD">modal dilation</option>
-      <option value="-sobel">Sobel filter</option>
-      <option value="-unsharp 1 1">Sharpen</option>
-      <option value="-dehaze 5 -dog 2 3.2" selected>edge filter</option>
-      <option value="-mesh -i d">meshify dark</option>
-      <option value="-mesh -i m">meshify medium</option>
-      <option value="-mesh -i b">meshify bright</option>
-      <option value="-mesh -i 42 -b 1 -l 1 -s 10 -r 0.05">meshify custom</option>
-    </select>
-    <input
-        type="text"
-        id="operationsText"
-        value="-dehaze 5 -dog 2 3.2"
-        required
-        minlength="2"
-        maxlength="128"
-        size="64"
-    />
-    <label for="overlayCheck" style="color:white">Overlay</label>
-    <input type="checkbox" id="overlayCheck" unchecked />
-    &nbsp;
-    <button id="processBtn">Process Image</button>
-    <button id="processBtn2">Process Image 2</button>
-    <button id="simplifyBtn">Simplify Mesh</button>
-    <button id="saveImageBtn">Save Image</button>
-    <button id="saveMeshBtn">Save Mesh</button>
-    <button id="moreButton">More Commands</button>
-    <div id="loadingCircle" class="loading-circle hidden"></div>
-  </header>
-  <main id="canvas-container">
-    <canvas id="gl1"></canvas>
-  </main>
-  <footer id="location">&nbsp;</footer>
-  <script type="module" src="/main.js"></script>
-  <dialog id="simplifyDialog">
-    <form method="dialog">
-      <p>
-        <label>Simplify Percent (1..100)</label>
-        <input id="shrinkSimplePct" type="number" min="1"  value="10" max="100">
-      </p>
-      <button id="cancelBtn" formmethod="dialog">Cancel</button>
-      <button autofocus id="applySimpleBtn" value="default">Apply</button>
-    </form>
-  </dialog>
-  <dialog id="saveDialog">
-    <form method="dialog">
-      <p>
-        <label>
-          Format:
-          <select id="formatSelect">
-            <option>MZ3 small and precise</option>
-            <option selected>OBJ widely supported</option>
-            <option>STL popular for printing</option>
-          </select>
-        </label>
-      </p>
-      <button id="cancelSaveBtn" formmethod="dialog">Cancel</button>
-      <button autofocus id="applySaveBtn" value="default">Save</button>
-    </form>
-  </dialog>
-</body>
+    <header>
+      <label for="command">Command</label>
+      <input id="command" value="-dehaze 5 -dog 2 3.2"/>
+      <button id="processButton" disabled>Process</button>
+      <button id="saveButton">Save</button>
+      <button id="aboutButton">About</button>
+      <button id="helpButton">Help</button>
+      <button id="moreButton">More commands</button>
+      <label for="overlayCheck" style="color:white">Overlay</label>
+      <input type="checkbox" id="overlayCheck" checked />
+    </header>
+    <main>
+      <canvas id="gl"></canvas>
+    </main>
+    <footer>
+        <label id="images"></label>
+</footer>
+    <script type="module" src="./main.js"></script>
+  </body>
 </html>
