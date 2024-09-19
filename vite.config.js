@@ -1,7 +1,23 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite'
 
-// vite.config.js
 export default defineConfig({
-  base: '/niivue-niimath/',
-  assetsInclude: ['**/*.gz'],
+  root: '.',
+  base: './',
+  server: {
+    open: 'index.html'
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        format: 'es'
+      }
+    }
+  },
+  worker: {
+    format: 'es'
+  },
+  // exclude @niivue/niimath from optimization
+  optimizeDeps: {
+    exclude: ['@niivue/niimath']
+  }
 })

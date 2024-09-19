@@ -35,7 +35,6 @@ canvas:focus {
 }
 div {
   display: table-row;
-  background-color: blue;
 }
 .dropdown {
   float: left;
@@ -103,4 +102,26 @@ div {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
+}
+
+.loading-circle {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hidden {
+  display: none;
 }
