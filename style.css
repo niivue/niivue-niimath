@@ -1,0 +1,35 @@
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: aliceblue;
+  margin-top: 60px;
+}
+
+.command-line {
+  text-align: center;
+  margin: auto;
+  margin-top: 10px;
+}
+
+.command-line input {
+  width: 350px;
+}
+
+.niimath-instructions {
+  color: white; 
+  font-size: 20px;
+  font-family: 'Roboto', sans-serif; 
+  margin-top:20px;
+}
+
+.niimath-instructions a:link {
+  color: aliceblue;
+
+}
+
+.niimath-instructions a:visited {
+  color: lightblue;
+
+}
