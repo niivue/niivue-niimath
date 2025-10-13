@@ -3,10 +3,14 @@ import { Niivue, SLICE_TYPE, SHOW_RENDER, MULTIPLANAR_TYPE } from '@niivue/niivu
 import { Niimath } from "@niivue/niimath"
 
 // create niivue instance but don't setup the scene just yet
-const nv = new Niivue();
+const nv = new Niivue({
+  logLevel: 'debug'
+});
 
 // create niimath instance (will be initialized later)
 const niimath = new Niimath();
+console.log(niimath);
+
 
 // store a reference to an unedited image for 
 // use when the user wants to change the command from the dropdown
@@ -16,24 +20,39 @@ async function processImage(isOverlay) {
   loadingCircle.classList.remove('hidden')
   try {
     const imageIndex = 0;
-    const niiBuffer = await nv.saveImage({ volumeByIndex: imageIndex }).buffer
+    const niiBuffer = await nv.saveImage({ volumeByIndex: imageIndex })
     const niiFile = new File([niiBuffer], 'image.nii')
     const input = document.getElementById('command');
     const cmd = input.value;
     const imageProcessor = niimath.image(niiFile)
     // check if "mesh" is in the command, and set isMesh
     const isMesh = cmd.includes('mesh')
+    // check if "bitmap" is in the command, and set isBitmap
+    const isBitmap = cmd.includes('bitmap')
     // create array of commands by separating on spaces
     // trim any leading or trailing whitespace
     const commands = cmd.split(' ').map((c) => c.trim())
     imageProcessor.commands = [...commands]
-    const outName = isMesh ? 'mesh.mz3' : 'image.nii'
-    const processedBlob = await imageProcessor.run(outName) // don't use .gz
+    const outName = isMesh ? 'mesh.mz3' : isBitmap ? 'bitmap.png' : 'image.nii.gz'
+    console.log('ismesh', isMesh);
+    console.log(imageProcessor);
+    const processedBlob = await imageProcessor.run(outName)
+    console.log(processedBlob);
+    
     const arrayBuffer = await processedBlob.arrayBuffer()
     if (!isOverlay) {
       nv.removeVolume(nv.volumes[0]);
     }
-    await nv.loadFromArrayBuffer(arrayBuffer, outName)
+    
+    if (isBitmap) {
+      // For bitmap outputs, use arrayBuffer with a name property ending in .png
+      await nv.loadVolumes([{ url: arrayBuffer, name: outName }])
+    } else {
+      // For meshes and nifti files, use loadFromArrayBuffer
+      console.log('arrayBuffer', arrayBuffer);
+      await nv.loadFromArrayBuffer(arrayBuffer, outName)
+    }
+    
     // set the colormap to the value of the color dropdown
     if (isOverlay) {
       setOverlayColor();
@@ -128,6 +147,9 @@ function populateMoreCommands() {
     '-sobel_binary',
     '-otsu 5',
     '-recip',
+    '-bitmap -x 0.33 0.66 -r -y 0.33 0.66 -r -z 0.33 0.66 basic.png',
+    '-bitmap -y 0.33 0.66 -z 0.33 0.66 -X 0.5 -c viridis cross.png',
+    '-bitmap -o 0.5 -c inferno optimal.png',
   ];
   for (let i = 0; i < commands.length; i++) {
     let option = document.createElement("option");
@@ -277,6 +299,7 @@ async function main() {
 
   // initialize niimath (loads wasm and sets up worker)
   await niimath.init();
+  console.log(niimath);
 
   // enable our button after our WASM has been setup
   initializeImageProcessing();
